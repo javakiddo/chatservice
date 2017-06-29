@@ -20,4 +20,5 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
 		//disable CSRF for websockets for now...
 		return true;
 	}
+	
 }
