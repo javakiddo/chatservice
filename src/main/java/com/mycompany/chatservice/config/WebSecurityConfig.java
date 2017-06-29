@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.csrf().disable()
 			.formLogin()
-				.loginPage("/index.html")
+				.loginPage("/index.html")				
 				.defaultSuccessUrl("/chat.html")
 				.permitAll()
 				.and()

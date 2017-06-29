@@ -1,15 +1,22 @@
 {
-  "name": "Spring WebSocket Chat",
+  "name": "webchat",
   "version": "0.1.2",
-  "authors": ["Sergi Almar <sergi.almar@gmail.com>"],
+  "authors": [
+    "none"
+  ],
   "dependencies": {
-	"jquery": "2.1.4",
+    "jquery": "2.1.4",
     "angular": "1.4.1",
     "angular-animate": "1.4.1",
     "angularjs-toaster": "0.4.15",
     "angularjs-scroll-glue": "0.0.1",
     "sockjs": "~0.3.4",
     "stomp": "stomp-websocket#~2.3.4",
-    "flat-ui": "2.2.2"
+    "flat-ui": "2.3.0",
+    "angular-route": "1.2.6",
+    "angular-http-auth": "1.2.2"  
+  },
+  "resolutions": {
+    "angular": ">1.2.6"
   }
 }
