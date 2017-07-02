@@ -4,7 +4,7 @@ chatApp.service('Session', function () {
         this.id = data.id;
         this.login = data.login;
         this.firstName = data.firstName;
-        this.lastName = data.familyName;
+        this.lastName = data.lastName;
         this.email = data.email;
         this.userRoles = [];
         angular.forEach(data.authorities, function (value, key) {
@@ -71,7 +71,7 @@ chatApp.service('AuthSharedService', function ($rootScope, $http, $resource, aut
             var isAuthorized = false;
             angular.forEach(authorizedRoles, function (authorizedRole) {
                 var authorized = (!!Session.login && Session.userRoles.indexOf(authorizedRole) !== -1);
-                if (authorized || authorizedRole = '*') {
+                if (authorized || authorizedRole == '*') {
                     isAuthorized = true;
                 }
 

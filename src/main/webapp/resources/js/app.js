@@ -82,11 +82,14 @@ chatApp.config(function ($routeProvider, USER_ROLES) {
 
 chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, USER_ROLES, $q, $timeout) {
     $rootScope.$on('$routeChangeStart', function (event, next) {
+        
 
         if (next.originalPath === '/login' && $rootScope.authenticated) {
             event.preventDefault();
+            
         } else if (next.access && next.access.loginRequired && !$rootScope.authenticated) {
             event.preventDefault();
+        
             $rootScope.$broadcast('event:auth-loginRequired', {});
         } else if (next.access && !AuthSharedService.isAuthorized(next.access.authorizedRoles)) {
             event.preventDefault();
@@ -100,7 +103,7 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
         });
     });
 
-    $rootScope.on('event:auth-loginConfirmed', function (event, data) {
+    $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
         console.log('login confirmed start ' + data);
         $rootScope.loadingAccount = false;
         var nextLocation = ($rootScope.requestedUrl ? $rootScope.requestedUrl : "/home");
@@ -119,7 +122,7 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     });
 
     $rootScope.$on('event:auth-loginRequired', function (event, data) {
-
+        console.log('EVENT------------ ' + event);
         if ($rootScope.loadingAccount && data.status != 401) {
             $rootScope.requestedUrl = $location.path()
             $location.path('/loading');
@@ -145,7 +148,7 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     });
 
     // Get already authenticated user account
-    AuthSharedService.getAccount();
+ //   AuthSharedService.getAccount();
 
 
 

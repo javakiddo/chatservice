@@ -14,15 +14,18 @@
 <div ng-if="authenticated" ng-include="'partials/navbar.html'"></div>
 
 <div class="container">
+  
     <div style="position: relative">
         <div ng-view="" class="fade"></div>
     </div>
 </div>
 
 
-
+   <!-- inject:js 
 <script src="resources/vendor/js/lib.min.js"></script>
-    <!-- inject:js 
+ 
+-->
+<script src="resources/vendor/js/lib.min.js"></script>
 
 <script src="resources/js/app.js"></script>
 
@@ -31,7 +34,7 @@
 <script src="resources/js/directives.js"></script>
 
 <script src="resources/js/services.js"></script>
--->
+
 <!-- endinject -->
 
 </body>
