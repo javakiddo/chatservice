@@ -25,6 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String SECURE_ADMIN_PASSWORD = "rockandroll";
 	
+	public static final String REMEMBER_ME_KEY = "rememberme_key";
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
