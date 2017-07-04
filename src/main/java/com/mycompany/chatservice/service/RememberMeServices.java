@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
@@ -20,10 +21,13 @@ import org.springframework.security.web.authentication.rememberme.AbstractRememb
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.chatservice.config.WebSecurityConfig;
 import com.mycompany.chatservice.domain.Token;
+import com.mycompany.chatservice.domain.User;
 import com.mycompany.chatservice.repository.TokenRepository;
+import com.mycompany.chatservice.repository.UserRepository;
 
 /**
  * Custom implementation of Spring Security's RememberMeServices.
@@ -55,7 +59,10 @@ public class RememberMeServices extends AbstractRememberMeServices
 	
 	private SecureRandom random;
 	
+	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	public RememberMeServices(Environment env, org.springframework.security.core.userdetails.UserDetailsService userDetailsService)
 	{
@@ -68,14 +75,84 @@ public class RememberMeServices extends AbstractRememberMeServices
 	@Override
 	protected void onLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication)
 	{
+		String login = successfulAuthentication.getName();
 		
+		log.debug("Creating new persistent login for user {}", login);
+		User user = userRepository.findByLogin(login);
+		Token token = new Token();
+		token.setSeries(generateSeriesData());
+		token.setUserLogin(user.getLogin());
+		token.setValue(generateTokenData());
+		token.setDate(new Date());
+		token.setIpAddress(request.getRemoteAddr());
+		token.setUserAgent(request.getHeader("User-Agent"));
+		
+		Arrays.asList(token).stream().forEach(t -> {
+			tokenRepository.save(token);
+			addCookie(token, request, response);
+			
+		});
 	}
 	
 	@Override
 	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) throws RememberMeAuthenticationException, UsernameNotFoundException
 	{
+		Token token = getPersistentToken(cookieTokens);
+		String login = token.getUserLogin();
 		
-		return null;
+		// Token also matches, so login is valid. Update the token value, keeping the *same* series number.
+		log.debug("Refreshing persistent login token for user '{}', series '{}'", login, token.getSeries());
+		token.setDate(new Date());
+		token.setValue(generateTokenData());
+		token.setIpAddress(request.getRemoteAddr());
+		token.setUserAgent(request.getHeader("User-Agent"));
+		
+		Arrays.asList(token).stream().forEach(t -> {
+			try
+			{
+				tokenRepository.save(token);
+				addCookie(token, request, response);
+			}
+			catch (DataAccessException e)
+			{
+				log.error("Failed to update token: ", e);
+				throw new RememberMeAuthenticationException("Autologin failed due to data access problem", e);
+			}
+			
+		});
+		
+		return getUserDetailsService().loadUserByUsername(login);
+	}
+	
+	/**
+	 * When logout occurs, only invalidate the current token, and not all user sessions.
+	 * <p/>
+	 * The standard Spring Security implementations are too basic: they invalidate all tokens for the
+	 * current user, so when he logs out from one browser, all his other sessions are destroyed.
+	 */
+	@Override
+	@Transactional
+	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+	{
+		String rememberMeCookie = extractRememberMeCookie(request);
+		if (rememberMeCookie != null && rememberMeCookie.length() != 0)
+		{
+			try
+			{
+				String[] cookieTokens = decodeCookie(rememberMeCookie);
+				Token token = getPersistentToken(cookieTokens);
+				tokenRepository.delete(token.getSeries());
+			}
+			catch (InvalidCookieException ice)
+			{
+				log.info("Invalid cookie, no persistent token could be deleted");
+			}
+			catch (RememberMeAuthenticationException rmae)
+			{
+				log.debug("No persistent token found, so no token could be deleted");
+			}
+		}
+		super.logout(request, response, authentication);
 	}
 	
 	/**
@@ -137,5 +214,10 @@ public class RememberMeServices extends AbstractRememberMeServices
 		byte[] newToken = new byte[DEFAULT_TOKEN_LENGTH];
 		random.nextBytes(newToken);
 		return new String(Base64.encode(newToken));
+	}
+	
+	private void addCookie(Token token, HttpServletRequest request, HttpServletResponse response)
+	{
+		setCookie(new String[] { token.getSeries(), token.getValue() }, TOKEN_VALIDITY_SECONDS, request, response);
 	}
 }
