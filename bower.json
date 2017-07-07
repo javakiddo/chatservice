@@ -7,9 +7,9 @@
   "dependencies": {
     "jquery": "2.1.4",
     "angular": "^1.6.2",
-    "angularjs-toaster": "~0.4.15",
+    "angular-animate": "^1.6.4",
     "angularjs-scroll-glue": "0.0.1",
-    "angular-animate": "*",
+    "angularjs-toaster": "~0.4.15",
     "sockjs": "~0.3.4",
     "stomp": "stomp-websocket#~2.3.4",
     "flat-ui": "2.3.0",

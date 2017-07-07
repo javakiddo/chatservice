@@ -24,8 +24,16 @@ chatApp.config(function ($routeProvider, USER_ROLES) {
         templateUrl: 'partials/users.html',
         controller: 'UsersController',
         access: {
+            
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
+        }
+    }).when('/chat', {
+        templateUrl: 'partials/chat.html',
+        controller: 'ChatController',
+        access: {
+            loginRequired: true,
+            authorizedRoles: [USER_ROLES.user]
         }
     }).when('/apiDoc', {
         templateUrl: 'partials/apiDoc.html',
@@ -106,7 +114,7 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
         console.log('login confirmed start ' + data);
         $rootScope.loadingAccount = false;
-        var nextLocation = ($rootScope.requestedUrl ? $rootScope.requestedUrl : "/home");
+        var nextLocation = ($rootScope.requestedUrl ? $rootScope.requestedUrl : "/chat");
         var delay = ($location.path() === "/loading" ? 1500 : 0);
 
         $timeout(function () {

@@ -40,6 +40,20 @@ chatApp.service('AuthSharedService', function ($rootScope, $http, $resource, aut
                 }
             };
             $http.post('authenticate', $.param({
+                username: userName,
+                password: password,
+                rememberme: rememberMe
+            }), config).then(function (response) {
+                //success callback
+                console.log(response);
+                authService.loginConfirmed(response.data);
+            }, function (response) {
+                //failure callback
+                $rootScope.authenticationError = true;
+                Session.invalidate();
+
+            })
+            /*$http.post('authenticate', $.param({
                     username: userName,
                     password: password,
                     rememberme: rememberMe
@@ -51,7 +65,7 @@ chatApp.service('AuthSharedService', function ($rootScope, $http, $resource, aut
                 .error(function (data, status, headers, config) {
                     $rootScope.authenticationError = true;
                     Session.invalidate();
-                })
+                })*/
 
         },
         getAccount: function () {
@@ -94,7 +108,11 @@ chatApp.service('HomeService', function ($log, $resource) {
     return {
         getTechno: function () {
             var userResource = $resource('resources/json/techno.json', {}, {
-                query: {method: 'GET', params: {}, isArray: true}
+                query: {
+                    method: 'GET',
+                    params: {},
+                    isArray: true
+                }
             });
             return userResource.query();
         }
@@ -131,4 +149,44 @@ chatApp.service('TokensService', function ($log, $resource) {
             return tokensResource.query();
         }
     }
+});
+chatApp.factory('ChatSocket', function ($rootScope) {
+    
+    var stompClient;
+    var wrappedSocket={
+        
+
+        init: function (url) {            
+            stompClient = Stomp.over(new SockJS(url));
+        },
+        connect: function (successCallback, errorCallback) {
+            
+            stompClient.connect({}, function (frame) {
+                $rootScope.$apply(function () {
+                    successCallback(frame);
+                });
+            }, function (error) {
+                $rootScope.$apply(function () {
+                    errorCallback(error);
+                });
+            });
+        },
+        subscribe: function (destination, callback) {
+            
+            stompClient.subscribe(destination, function (message) {
+                $rootScope.$apply(function () {
+                    callback(message);
+                });
+            });
+        },
+        send: function (destination, headers, object) {
+            
+            stompClient.send(destination, headers, object);
+        }
+
+
+    }
+    return wrappedSocket;
+
+
 });

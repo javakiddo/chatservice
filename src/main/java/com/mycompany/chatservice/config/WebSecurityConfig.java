@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
         .formLogin()
             .loginProcessingUrl("/authenticate")
-            .defaultSuccessUrl("/partials/home.html")
+            .defaultSuccessUrl("/chat")
             
             .successHandler(restAuthenticationSuccessHandler)
             .failureHandler(restAuthenticationFailureHandler)

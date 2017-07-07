@@ -34,5 +34,8 @@
   "scripts": {
     "prebuild": "npm install",
     "build": "gulp"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }

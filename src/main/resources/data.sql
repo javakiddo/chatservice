@@ -18,6 +18,11 @@ insert into authority (id,name) values (3,'user');
 insert into users_authority (id_user, id_authority) values (1, 1);
 insert into users_authority (id_user, id_authority) values (1, 2);
 insert into users_authority (id_user, id_authority) values (1, 3);
+insert into users_authority (id_user, id_authority) values (2, 1);
+insert into users_authority (id_user, id_authority) values (2, 2);
 insert into users_authority (id_user, id_authority) values (2, 3);
+insert into users_authority (id_user, id_authority) values (3, 1);
+insert into users_authority (id_user, id_authority) values (3, 2);
 insert into users_authority (id_user, id_authority) values (3, 3);
+
 	
