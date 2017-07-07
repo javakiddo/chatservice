@@ -21,13 +21,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan("com.mycompany.chatservice.domain")
-@EnableJpaRepositories("com.mycompany.chatservice.domain")
+@EnableJpaRepositories("com.mycompany.chatservice.repository")
 public class JPAConfig {
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).setName("myDb")
-                .addScript("classpath:schema.sql").addScript("classpath:data.sql").build();
+        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL)
+        		.setName("myDb").build();
+                //.addScript("classpath:schema.sql")
+            //    .addScript("classpath:data.sql").build();
     }
 
     @Bean(name = "entityManagerFactory")

@@ -1,4 +1,4 @@
-package com.mycompany.chatservice.service;
+package com.mycompany.chatservice.security;
 
 import org.springframework.security.core.AuthenticationException;
 

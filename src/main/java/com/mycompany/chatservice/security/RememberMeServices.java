@@ -1,4 +1,4 @@
-package com.mycompany.chatservice.service;
+package com.mycompany.chatservice.security;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -11,6 +11,8 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.rememberme.AbstractRememb
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mycompany.chatservice.config.WebSecurityConfig;
@@ -43,6 +46,8 @@ import com.mycompany.chatservice.repository.UserRepository;
  * </ul>
  * <p/>
  */
+@Service
+@Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
 public class RememberMeServices extends AbstractRememberMeServices
 {
 	
@@ -64,6 +69,7 @@ public class RememberMeServices extends AbstractRememberMeServices
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
 	public RememberMeServices(Environment env, org.springframework.security.core.userdetails.UserDetailsService userDetailsService)
 	{
 		
@@ -95,6 +101,7 @@ public class RememberMeServices extends AbstractRememberMeServices
 	}
 	
 	@Override
+	@Transactional
 	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) throws RememberMeAuthenticationException, UsernameNotFoundException
 	{
 		Token token = getPersistentToken(cookieTokens);
