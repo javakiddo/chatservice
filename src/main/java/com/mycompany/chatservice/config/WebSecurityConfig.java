@@ -3,6 +3,7 @@ package com.mycompany.chatservice.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,16 +15,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-import com.mycompany.chatservice.security.RememberMeServices;
 import com.mycompany.chatservice.security.RestUnauthorizedEntryPoint;
 import com.mycompany.chatservice.security.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-
+@ComponentScan(basePackages = {"com.mycompany.chatservice.security"})
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
@@ -89,6 +89,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
         .formLogin()
             .loginProcessingUrl("/authenticate")
+            .defaultSuccessUrl("/partials/home.html")
+            
             .successHandler(restAuthenticationSuccessHandler)
             .failureHandler(restAuthenticationFailureHandler)
             .usernameParameter("username")

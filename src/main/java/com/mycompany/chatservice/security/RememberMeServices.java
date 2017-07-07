@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.rememberme.AbstractRememb
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +47,9 @@ import com.mycompany.chatservice.repository.UserRepository;
  * </ul>
  * <p/>
  */
-@Service
-@Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
+
+//@Scope( proxyMode = ScopedProxyMode.TARGET_CLASS )
+@Component
 public class RememberMeServices extends AbstractRememberMeServices
 {
 	

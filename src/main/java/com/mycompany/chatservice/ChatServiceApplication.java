@@ -1,30 +1,41 @@
 package com.mycompany.chatservice;
 
-import static java.util.stream.Collectors.joining;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.WebSocketTraceChannelInterceptorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
-import com.mycompany.chatservice.security.RememberMeServices;
-
-import redis.embedded.RedisServer;
+import com.mycompany.chatservice.domain.Authority;
+import com.mycompany.chatservice.domain.User;
+import com.mycompany.chatservice.repository.AuthortiyRepository;
 @SpringBootApplication
 @Import(WebSocketTraceChannelInterceptorAutoConfiguration.class)
-public class ChatServiceApplication {
+public class ChatServiceApplication  implements CommandLineRunner{
+	
+	private AuthortiyRepository authortiyRepository;
 	
 //	private final Logger log = LoggerFactory.getLogger(RememberMeServices.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChatServiceApplication.class, args);
 	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		
+		Authority a= new Authority();
+		a.setName("admin");
+		
+		
+		
+		User user= new User();
+		
+
+		
+	}
+	
+	
 	
 	
 //	@Autowired RedisServer redisServer;

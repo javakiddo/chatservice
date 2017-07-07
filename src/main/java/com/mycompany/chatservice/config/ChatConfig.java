@@ -43,6 +43,11 @@ public class ChatConfig
 		return new ParticipantRepository();
 	}
 	
+//	@Bean
+//	public AbstractRememberMeServices rememberMeServices(Environment env, org.springframework.security.core.userdetails.UserDetailsService userDetailsService)
+//	{
+//		return new RememberMeServices(env,userDetailsService);
+//	}
 	
 	
 	@Bean
