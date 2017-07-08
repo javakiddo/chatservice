@@ -24,7 +24,7 @@ chatApp.config(function ($routeProvider, USER_ROLES) {
         templateUrl: 'partials/users.html',
         controller: 'UsersController',
         access: {
-            
+
             loginRequired: true,
             authorizedRoles: [USER_ROLES.admin]
         }
@@ -33,7 +33,7 @@ chatApp.config(function ($routeProvider, USER_ROLES) {
         controller: 'ChatController',
         access: {
             loginRequired: true,
-            authorizedRoles: [USER_ROLES.user]
+            authorizedRoles: [USER_ROLES.all]
         }
     }).when('/apiDoc', {
         templateUrl: 'partials/apiDoc.html',
@@ -90,14 +90,24 @@ chatApp.config(function ($routeProvider, USER_ROLES) {
 
 chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, USER_ROLES, $q, $timeout) {
     $rootScope.$on('$routeChangeStart', function (event, next) {
-        
+       /* if ($rootScope.authenticated === true) {
+            console.log($rootScope.authenticated);
+            $rootScope.$broadcast('event:auth-loginConfirmed', {});
+            event.preventDefault();
+        }*/
+      
 
         if (next.originalPath === '/login' && $rootScope.authenticated) {
             event.preventDefault();
-            
+
+        } else if (next.originalPath === '/chat' && $rootScope.authenticated) {
+            console.log(next)
+            event.preventDefault();
+             $rootScope.$broadcast("event:auth-loginConfirmed", {});
+
         } else if (next.access && next.access.loginRequired && !$rootScope.authenticated) {
             event.preventDefault();
-        
+
             $rootScope.$broadcast('event:auth-loginRequired', {});
         } else if (next.access && !AuthSharedService.isAuthorized(next.access.authorizedRoles)) {
             event.preventDefault();
@@ -106,13 +116,19 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     });
 
     $rootScope.$on('$routeChangeSuccess', function (scope, next, current) {
+        /*if ($rootScope.authenticated === true) {
+            console.log($rootScope.authenticated);
+            $rootScope.$broadcast('event:auth-loginConfirmed', {});
+            event.preventDefault();
+        }*/
+
         $rootScope.$evalAsync(function () {
             $.material.init();
         });
     });
 
     $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
-        console.log('login confirmed start ' + data);
+        console.log('login confirmed start ',event, data);
         $rootScope.loadingAccount = false;
         var nextLocation = ($rootScope.requestedUrl ? $rootScope.requestedUrl : "/chat");
         var delay = ($location.path() === "/loading" ? 1500 : 0);
@@ -130,7 +146,16 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     });
 
     $rootScope.$on('event:auth-loginRequired', function (event, data) {
-        console.log('EVENT------------ ' + event);
+         console.log('event loginRequired  ',event, data);
+        
+        console.log('$rootScope.authenticated  ',$rootScope.authenticated);
+        
+        if($rootScope.authenticated)
+            {
+                console.log('Login Required but rootscope authenticated',event);
+                event.preventDefault();
+                return;
+            }
         if ($rootScope.loadingAccount && data.status != 401) {
             $rootScope.requestedUrl = $location.path()
             $location.path('/loading');
@@ -156,7 +181,7 @@ chatApp.run(function ($rootScope, $location, $http, AuthSharedService, Session, 
     });
 
     // Get already authenticated user account
- //   AuthSharedService.getAccount();
+    //   AuthSharedService.getAccount();
 
 
 

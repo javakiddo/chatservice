@@ -51,6 +51,9 @@ public class ChatController {
 		return message;
 	}
 	
+	
+	
+	
 	@MessageMapping("/chat.private.{username}")
 	public void filterPrivateMessage(@Payload ChatMessage message, @DestinationVariable("username") String username, Principal principal) {
 	//	checkProfanityAndSanitize(message);
