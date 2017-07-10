@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mycompany.chatservice.domain.Token;
 import com.mycompany.chatservice.domain.User;
@@ -14,6 +15,8 @@ import com.mycompany.chatservice.repository.TokenRepository;
 import com.mycompany.chatservice.repository.UserRepository;
 import com.mycompany.chatservice.security.SecurityUtilsService;
 
+@RestController
+//@Api(description = "Users management API")
 public class SecurityController {
 	@Autowired
 	private UserRepository userRepo;
